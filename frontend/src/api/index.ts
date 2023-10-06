@@ -26,7 +26,28 @@ export const createOrder = async (order: OrderSubmission): Promise<Order> =>  {
             console.log("response: ", response)
           return response.data;
         } catch (error) {
-          console.error("Error uploading the file:", error);
+          console.error("Error creating the order:", error);
           throw error;
         }
   }
+
+
+export const getOrder = async (orderId: string): Promise<Order> => {
+  try {
+    const response = await axios.get(`${BASE_URL}/orders/order/${orderId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching the order:", error);
+    throw error;
+  }
+}
+
+export const getOrders = async (): Promise<Order[]> => {
+  try {
+    const response = await axios.get(`${BASE_URL}/orders`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching the orders:", error);
+    throw error;
+  }
+}

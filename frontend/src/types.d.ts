@@ -5,6 +5,7 @@ interface OrderSubmission {
 }
 
 interface Product  {
+    id?: string, 
     vendor?: string;
     unitPrice: number;
     quantity: number;

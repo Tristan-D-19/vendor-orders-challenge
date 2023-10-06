@@ -7,16 +7,13 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { createOrder } from "../../api";
-import { fi } from "date-fns/locale";
+import { useNavigate } from "react-router-dom";
 
 
-
-type OrderDate = Date | null | undefined;
 
 export default function OrderForm() {
   const [vendor, setVendor] = useState("");
   const [products, setProducts] = useState<any[]>([]);
-  const [orderSubmission, setOrderSubmission] = useState<OrderSubmission>();
   const [pageIndex, setPageIndex] = useState<number>(1);
   const [offsetStart, setOffsetStart] = useState<number>(0);
   const [offsetEnd, setOffsetEnd] = useState<number>(0);
@@ -27,7 +24,9 @@ export default function OrderForm() {
   const [file, setFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [completedOrder, setCompletedOrder]= useState<Order>();
-  
+  const [total, setTotal] = useState<Number> ();
+  const navigate = useNavigate();
+
   useEffect(() => {
     console.log("Products: ", products);
     const pages = Math.ceil(products.length / pageSize);
@@ -41,6 +40,16 @@ export default function OrderForm() {
     }
 }, [file]);
 
+
+useEffect(() => {
+  if(completedOrder && completedOrder.products){
+      const sum = completedOrder.products.reduce((acc: number, product: Product) => {
+          return acc + product.unitPrice * product.quantity;
+        }, 0)
+        setTotal(sum);
+        navigate(`/orders/order/${completedOrder.id}?summary=true`);
+  }
+   }, [completedOrder]);
   useEffect(() => {
     if(isSubmitting && vendor && orderDate && file && file?.size > 0){
       const order: OrderSubmission = {
@@ -194,10 +203,7 @@ export default function OrderForm() {
                 <div className="flex items-center justify-between border-t border-gray-200 pt-6">
                   <dt className="text-base font-medium">Total</dt>
                   <dd className="text-base font-medium text-gray-900">
-                    $
-                    {products.reduce((acc: number, product: Product) => {
-                      return acc + product.unitPrice * product.quantity;
-                    }, 0)}
+                    ${total?.toLocaleString()}
                   </dd>
                 </div>
 

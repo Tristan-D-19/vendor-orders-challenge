@@ -5,10 +5,8 @@ import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { Link, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 const navigation = [
-  { name: 'Dashboard', to: '/', current: false },
-  { name: 'Vendors', to: '/vendors', current: false },
   { name: 'Orders', to: '/orders', current: false },
-  { name: 'Checkout', to: '/checkout', current: false },
+  { name: 'Checkout', to: '/', current: false },
 ]
 
 function classNames(...classes: any) {
