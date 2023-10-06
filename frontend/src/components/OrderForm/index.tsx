@@ -12,12 +12,12 @@ import { useNavigate } from "react-router-dom";
 
 
 export default function OrderForm() {
+  const pageSize = 20;
   const [vendor, setVendor] = useState("");
   const [products, setProducts] = useState<any[]>([]);
   const [pageIndex, setPageIndex] = useState<number>(1);
   const [offsetStart, setOffsetStart] = useState<number>(0);
   const [offsetEnd, setOffsetEnd] = useState<number>(0);
-  const [pageSize, setPageSize] = useState<number>(20);
   const [displayedProducts, setDisplayedProducts] = useState<any[]>([]);
   const [totalPages, setTotalPages] = useState<number>(0);
   const [orderDate, setOrderDate] = useState<Date>(new Date());
@@ -96,9 +96,7 @@ useEffect(() => {
       setPageIndex((prevPageIndex) => prevPageIndex - 1);
     }
   }
-  function handleCheckout(){
 
-  }
   return (
     <div className="bg-gray-50">
       <div className="mx-auto max-w-2xl px-4 pb-24 pt-16 sm:px-6 lg:max-w-7xl lg:px-8">

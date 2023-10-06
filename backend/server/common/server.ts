@@ -5,16 +5,20 @@ import http from 'http';
 import os from 'os';
 import cookieParser from 'cookie-parser';
 import l from './logger';
-
+import cors from 'cors';
 import errorHandler from '../api/middlewares/error.handler';
 import * as OpenApiValidator from 'express-openapi-validator';
-
+const FRONT_END_URL = process.env.FRONT_END_URL || "http://localhost:5173";
 const app = express();
+const corsOptions = {
+  origin: FRONT_END_URL,  // specify the frontend's address
 
+};
 export default class ExpressServer {
   private routes: (app: Application) => void;
   constructor() {
     const root = path.normalize(__dirname + '/../..');
+    app.use(cors(corsOptions));
     app.use(bodyParser.json({ limit: process.env.REQUEST_LIMIT || '100kb' }));
     app.use(
       bodyParser.urlencoded({
