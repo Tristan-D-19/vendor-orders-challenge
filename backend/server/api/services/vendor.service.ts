@@ -1,40 +1,35 @@
-import L from '../../common/logger';
 import {v4 as uuid} from 'uuid'
-
-interface Vendor {
-  id: string;
-  name: string,
-  date: Date, 
-  dateAdded: Date
-}
-
-//Temporary 
-const vendors: Vendor[] = [
-  { id: "d4c87334-68dd-4ddd-8cc6-897b6be11132" , name: 'Samsung',date: new Date(), dateAdded: new Date() },
-  { id: "ac755c07-b54b-43e0-a9ce-67161f8e23bb" , name: 'Sony',  date: new Date(), dateAdded: new Date()}]
+import { PrismaClient } from '@prisma/client';
+import {Vendor} from '../../common/types'
+const prisma = new PrismaClient();
 
 export class VendorService {
-  all(): Promise<Vendor[]> {
-    L.info(vendors, 'fetch all vendors');
-    return Promise.resolve(vendors);
+  
+  async all(): Promise<Vendor[]> {
+    return prisma.vendor.findMany();
   }
 
-  byId(id: number): Promise<Vendor> {
-    L.info(`fetch Vendor with id ${id}`);
-    return this.all().then((r) => r[id]);
+  async byId(id: string): Promise<Vendor | null> {
+
+    return prisma.vendor.findUnique({
+      where: { id: id }
+    });
   }
 
-  byName(id: number): Promise<Vendor> {
-    L.info(`fetch Vendor with id ${id}`);
-    return this.all().then((r) => r[id]);
+  async byName(name: string): Promise<Vendor | null> {
+    return prisma.vendor.findFirst({
+      where: { name: name }
+    });
   }
 
-  create(vendor: Vendor): Promise<Vendor> {
-    L.info(`create new vendor: ${vendor}`);
-    vendor.id = uuid();
-    vendor.dateAdded = new Date();
-    vendors.push(vendor);
-    return Promise.resolve(vendor);
+  async create(vendorInput: Omit<Vendor, 'id' >): Promise<Vendor> {
+    const vendor = await prisma.vendor.create({
+      data: {
+        ...vendorInput,
+        id: uuid(),
+      }
+    });
+    return vendor;
   }
 }
 

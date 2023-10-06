@@ -1,0 +1,29 @@
+version: '3.7'
+
+networks:
+  vendor-network:
+    driver: bridge
+
+services:
+
+  postgres:
+    image: postgres:16.0  # Specify a version
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=superpass
+  
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  # Persistent volume
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql 
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "admin"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+
+volumes:
+  postgres_data:
+

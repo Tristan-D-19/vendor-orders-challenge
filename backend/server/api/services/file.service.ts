@@ -3,13 +3,10 @@ import L from '../../common/logger';
 import * as fs from 'fs';
 
 
-type File = {
-    path: fs.PathLike
-  }
 
 
 export class FileService {
-  async parseCSV (file: string): Promise<any[]> {
+  async parseCSV (file: Express.Multer.File): Promise<any[]> {
     return Promise.resolve([file]);
 }
 

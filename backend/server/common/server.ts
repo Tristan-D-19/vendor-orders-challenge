@@ -44,6 +44,7 @@ export default class ExpressServer {
   router(routes: (app: Application) => void): ExpressServer {
     routes(app);
     app.use(errorHandler);
+    app.use(express.json()); 
     return this;
   }
 
