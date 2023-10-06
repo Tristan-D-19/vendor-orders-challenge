@@ -5,7 +5,7 @@ Time estimate: 4 hours.
 
 
 
-To start the database run docker-compose up postgres
+To start the backend run docker-compose up
 
-to stop the database run docker-compose down postgres
+to stop the backend run docker-compose down 
 

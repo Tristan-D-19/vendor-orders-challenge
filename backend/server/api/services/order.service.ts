@@ -31,29 +31,39 @@ export class OrderService {
 
 
   async create(orderData: Omit<Order, 'id' | 'dateAdded'>): Promise<Order> {
-    const vendor = await vendorService.create({name: orderData.vendor})
-    const newOrder = {
-      ...orderData,
-      id: uuid(),
-      vendorId: vendor.id,
-      dateAdded: new Date(),
-      products: {
-        create: orderData.products?.map((product: Product) => ({
-          ...product,
-          id: uuid(),
-        })),
-      },
-    };
+    return new Promise(async (resolve, reject) => {
+   try{
+       const vendor = await vendorService.create({name: orderData.vendor})
+   const newOrder = {
+     ...orderData,
+     id: uuid(),
+     vendorId: vendor.id,
+     dateAdded: new Date(),
+     products: {
+       create: orderData.products?.map((product: Product) => ({
+         ...product,
+         id: uuid(),
+       })),
+     },
+   };
 
-    const createdOrder = await prisma.order.create({
-      data: newOrder,
-      include: {
-        products: true,
-      },
-    });
+   const createdOrder = await prisma.order.create({
+     data: newOrder,
+     include: {
+       products: true,
+     },
+   });
+   return resolve(createdOrder);
 
-    return createdOrder;
-  }
+   }catch(error: any){
+    reject("error creating order: " + error);
+
+   }
+});
+}
+
+
+  
 }
 
 export default new OrderService();

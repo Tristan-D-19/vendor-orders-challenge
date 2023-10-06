@@ -39,7 +39,7 @@ export class Controller {
     }
     orderService.create(order).then((r) =>
       res.status(201).location(`/orders/order/${r.id}`).json(r)
-    );
+    ).catch;
   }
 
 }
