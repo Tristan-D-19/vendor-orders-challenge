@@ -12,9 +12,10 @@ Start the Services:
 ```bash
 docker-compose up
 ```
-##NOTE you must run *after* the services have started:
+##NOTE you must run the following command *after* the services have started:
 
 ```bash
+npm run install:all
 npm run migrate:prod
 ```
 
