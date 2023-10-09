@@ -35,7 +35,10 @@ export const createOrder = async (order: OrderSubmission): Promise<Order> =>  {
 
 export const getOrder = async (orderId: string): Promise<Order> => {
   try {
-    const response = await axios.get(`${BASE_URL}/orders/order/${orderId}`);
+    const response = await axios.get(`${BASE_URL}/orders/order/${orderId}`, { headers: {
+      'Content-Type': 'multipart/form-data',
+      'Authorization': `Bearer ${getSessionToken()}`,
+    },});
     return response.data;
   } catch (error) {
     console.error("Error fetching the order:", error);
@@ -45,7 +48,10 @@ export const getOrder = async (orderId: string): Promise<Order> => {
 
 export const getOrders = async (): Promise<Order[]> => {
   try {
-    const response = await axios.get(`${BASE_URL}/orders`);
+    const response = await axios.get(`${BASE_URL}/orders`, { headers: {
+      'Content-Type': 'multipart/form-data',
+      'Authorization': `Bearer ${getSessionToken()}`,
+    },});
     return response.data;
   } catch (error) {
     console.error("Error fetching the orders:", error);
