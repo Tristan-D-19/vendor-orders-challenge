@@ -1,6 +1,8 @@
 
+import { Vendor } from '@prisma/client';
 import VendorService from '../../services/vendor.service';
 import { Request, Response } from 'express';
+import { error } from 'console';
 
 
 export class Controller {
@@ -10,7 +12,7 @@ export class Controller {
 
   byId(req: Request, res: Response): void {
     const id = req.params['id'];
-    VendorService.byId(id).then((r) => {
+    VendorService.byId(id).then((r: Vendor| null) => {
       if (r) res.json(r);
       else res.status(404).end();
     });
@@ -20,10 +22,13 @@ export class Controller {
 
   create(req: Request, res: Response): void {
     VendorService.create(req.body.name).then((r) =>
-      res.status(201).location(`/vendors/vendor/${r.id}`).json(r)
-    );
+   { if(r != null)
+      res.status(201).location(`/vendors/vendor/${r.id}`).json(r)}
+    ).catch((error: any)=> {
+      console.error("error getting new vendor: ", error)
+    });
   }
 
 }
-  
+
 export default new Controller();

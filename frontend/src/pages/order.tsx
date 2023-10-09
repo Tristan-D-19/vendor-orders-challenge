@@ -1,8 +1,12 @@
-import {  useParams } from 'react-router-dom';
+import {  useParams, useLocation } from 'react-router-dom';
 import { useState, useEffect } from "react";
 import { getOrder } from '../api';
+import SuccessMessage from '../components/OrderForm/SuccessMessage';
 
 export default function Order() {
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const success = queryParams.get('success');
     const { orderId } = useParams();
     const [order, setOrder]= useState<Order>();
     const [total, setTotal] = useState<Number> ();
@@ -13,7 +17,7 @@ export default function Order() {
         })
      }
       }, [orderId]);
-    
+
 
       useEffect(() => {
         if(order && order.products){
@@ -28,7 +32,9 @@ export default function Order() {
    <div className="bg-white">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
         <h1 className="text-3xl font-bold tracking-tight text-gray-900">Order Details</h1>
-
+        {
+          success === 'true' && <SuccessMessage/>
+        }
         <div className="mt-2 border-b border-gray-200 pb-5 text-sm sm:flex sm:justify-between">
           <dl className="flex">
             <dt className="text-gray-500">Order number&nbsp;</dt>
@@ -61,26 +67,26 @@ export default function Order() {
                   <h3 className="text-lg font-medium text-gray-900">
                  Model Number: {product.modelNumber}
                   </h3>
-                  
-                 
+
+
                   </div>
- 
+
          </div>
-         
+
        </div>
        <div className="flex shrink-0 items-center gap-x-6">
          <div className="hidden sm:flex sm:flex-col sm:items-end">
          <p className="mt-3 text-gray-500">Quantity: {product.quantity}</p>
-         
+
          </div>
-     
+
        </div>
        <div className="flex shrink-0 items-center gap-x-6">
          <div className="hidden sm:flex sm:flex-col sm:items-end">
          <p className="mt-1 font-medium text-gray-900">unit price: ${product.unitPrice}</p>
-         
+
          </div>
-     
+
        </div>
      </li>
             ))}
@@ -91,7 +97,7 @@ export default function Order() {
         </div>
 
         <dl className="mt-8 divide-y divide-gray-200 text-sm lg:col-span-7 lg:mt-0 lg:pr-8">
-         
+
               <div className="flex items-center justify-between pt-4">
                 <dt className="font-medium text-gray-900">Order total</dt>
                {total ? <dd className="font-medium text-indigo-600">{total.toLocaleString()}</dd>: null}

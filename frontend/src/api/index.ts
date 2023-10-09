@@ -1,5 +1,5 @@
 import axios from 'axios';
-const BASE_URL = import.meta.env.DEV ? "/api": import.meta.env.VITE_API_ENDPOINT 
+const BASE_URL =  import.meta.env.VITE_API_ENDPOINT
 
 
 
@@ -7,8 +7,9 @@ const convertToFormData = (order: OrderSubmission): FormData => {
   const formData = new FormData();
   formData.append('vendor', order.vendor);
   formData.append('date', order.date.toISOString());
-  formData.append('file', order.file); 
-  
+  if(order.file)
+  {formData.append('file', order.file); }
+
   return formData;
 }
 export const createOrder = async (order: OrderSubmission): Promise<Order> =>  {
