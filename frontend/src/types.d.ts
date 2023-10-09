@@ -1,11 +1,11 @@
 interface OrderSubmission {
     vendor: string,
     date: Date,
-    file: File,
+    file: File | null,
 }
 
 interface Product  {
-    id?: string, 
+    id?: string,
     vendor?: string;
     unitPrice: number;
     quantity: number;
@@ -14,10 +14,10 @@ interface Product  {
 
  interface Order {
     vendorId?: string | null,
-    vendor: string, 
+    vendor: string,
     id: string;
     products?: Product[],
     dateAdded: Date;
     date: Date;
+    total?: number;
   }
-  

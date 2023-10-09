@@ -4,33 +4,56 @@ import {Vendor} from '../../common/types'
 const prisma = new PrismaClient();
 
 export class VendorService {
-  
+
   async all(): Promise<Vendor[]> {
-    return prisma.vendor.findMany();
+
+    try{
+      return prisma.vendor.findMany();
+    }catch(error : any){
+      console.error("error fetching all vendors: ", error);
+      return [];
+    }
   }
 
   async byId(id: string): Promise<Vendor | null> {
-
-    return prisma.vendor.findUnique({
-      where: { id: id }
-    });
+try{
+  return prisma.vendor.findUnique({
+    where: { id: id }
+  });
+}catch(error : any){
+  console.error("error fetching by id: ", error);
+  return null;
+}
   }
 
   async byName(name: string): Promise<Vendor | null> {
-    return prisma.vendor.findFirst({
-      where: { name: name }
-    });
+    try{
+      return prisma.vendor.findFirst({
+        where: { name: name }
+      });
+
+    }catch(error : any){
+      console.error("error fetching by name: ", error);
+      return null;
+    }
   }
 
-  async create(vendorInput: Omit<Vendor, 'id' >): Promise<Vendor> {
-    const vendor = await prisma.vendor.create({
-      data: {
-        ...vendorInput,
-        id: uuid(),
-      }
-    });
-    return vendor;
+  async create(vendorInput: Omit<Vendor, 'id' >): Promise<Vendor| null> {
+    try{
+      const vendor = await prisma.vendor.create({
+        data: {
+          ...vendorInput,
+          id: uuid(),
+        }
+      });
+      return vendor;
+
+    }catch(error : any){
+      console.error("error creating new vendor: ", error);
+      return null;
+    }
   }
+
 }
 
 export default new VendorService();

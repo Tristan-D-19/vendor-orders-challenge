@@ -7,8 +7,17 @@ export default function Orders() {
   const [orders, setOrders]= useState<Order[]>();
   useEffect(()=> {
     getOrders().then((res)=> {
-      setOrders(res);
-      
+      if(res.length > 0){
+        const tempOrders = res.map((item)=> {
+          item.total = item.products?.reduce((acc: number, product: Product) => {
+            return acc + product.unitPrice * product.quantity;
+          }, 0)
+          return item;
+        })
+        setOrders(tempOrders);
+
+      }
+
     })
   }, [])
   return (
@@ -59,15 +68,15 @@ export default function Orders() {
                       </div>
                       <div>
                         <dt className="font-medium text-gray-900">Total amount</dt>
-                        <dd className="mt-1 font-medium text-gray-900">$10000</dd>
+                        <dd className="mt-1 font-medium text-gray-900">${order.total?.toLocaleString('en-US')}</dd>
                       </div>
                     </dl>
 
-        
+
 
                   </div>
 
-      
+
                 </div>
               )): null}
             </div>

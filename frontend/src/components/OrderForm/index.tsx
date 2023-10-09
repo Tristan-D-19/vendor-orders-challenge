@@ -8,36 +8,81 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { createOrder } from "../../api";
 import { useNavigate } from "react-router-dom";
-
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import SuccessMessage from "./SuccessMessage";
 
 
 export default function OrderForm() {
   const pageSize = 20;
-  const [vendor, setVendor] = useState("");
+  const [showSuccess, setShowSuccess] = useState(false);
   const [products, setProducts] = useState<any[]>([]);
   const [pageIndex, setPageIndex] = useState<number>(1);
   const [offsetStart, setOffsetStart] = useState<number>(0);
   const [offsetEnd, setOffsetEnd] = useState<number>(0);
   const [displayedProducts, setDisplayedProducts] = useState<any[]>([]);
   const [totalPages, setTotalPages] = useState<number>(0);
-  const [orderDate, setOrderDate] = useState<Date>(new Date());
   const [file, setFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [completedOrder, setCompletedOrder]= useState<Order>();
   const [total, setTotal] = useState<Number> ();
   const navigate = useNavigate();
+  const [formErrors, setFormErrors] = useState("");
+  const formik = useFormik({
+    initialValues: {
+      vendor: '',
+      file: null,
+      date: new Date(),
+    },
+    validationSchema: Yup.object({
+      vendor: Yup.string()
+      .min(3, "Must be at least 3 characters")
+        .max(15, 'Must be 15 characters or less')
+        .required('A vendor is Required'),
+      date: Yup.date().nullable()
+      .typeError('The value must be a date (YYYY-MM-DD)')
+        .required('A date Required'),
+      file: Yup.mixed().required('A file is Required'),
+    }),
+    onSubmit: async (values, { setTouched}, ) => {
+      setIsSubmitting(true);
+      setTouched({});
+      const order: OrderSubmission = {
+        vendor: values.vendor,
+        date: values.date,
+        file: values.file
+      }
+      try {
+        const res = await createOrder(order);
+        if (res && res.products) {
+          setCompletedOrder(res);
+          setProducts(res.products);
+          setShowSuccess(true);
+        }
+        setIsSubmitting(false);
+      } catch (error: any) {
+        console.log("error: ", error)
+        setFormErrors("Error creating order: " + error.message);
+        formik.resetForm();
 
+        setIsSubmitting(false);
+      }
+    }
+  });
   useEffect(() => {
     const pages = Math.ceil(products.length / pageSize);
-    
+
     setTotalPages(pages);
   }, [products]);
 
   useEffect(() => {
     if (file && file.size > 0) {
         console.log("file: ", file.name)
+        formik.setFieldValue("file", file);
     }
 }, [file]);
+
+
 
 
 useEffect(() => {
@@ -46,38 +91,32 @@ useEffect(() => {
           return acc + product.unitPrice * product.quantity;
         }, 0)
         setTotal(sum);
-        navigate(`/orders/order/${completedOrder.id}?summary=true`);
+        navigate(`/orders/order/${completedOrder.id}?summary=true&&success=true`);
   }
-   }, [completedOrder]);
+   }, [completedOrder, showSuccess]);
+
+
+
+
+
+
+
   useEffect(() => {
-    if(isSubmitting && vendor && orderDate && file && file?.size > 0){
-      const order: OrderSubmission = {
-        vendor,
-        date: orderDate,
-        file
-      }
-      createOrder(order).then(res => {
-        setCompletedOrder(res);
-        if(res && res.products){
-          setProducts(res.products)
-        }
-        setIsSubmitting(false);
-      });
-    }
-  }, [isSubmitting]);
-  
-  
+    if(formErrors){
+      alert(formErrors);}
+  }, [formErrors]);
+
   useEffect(() => {
     const startIdx = (pageIndex - 1) * pageSize;
     const endIdx = pageSize && products.length > 1 ? startIdx + pageSize: startIdx;
     setOffsetStart(startIdx)
     setOffsetEnd(endIdx)
-    
-    const currentItems = products.slice(startIdx, endIdx); 
+
+    const currentItems = products.slice(startIdx, endIdx);
     setDisplayedProducts(currentItems);
-    
+
   }, [pageIndex, pageSize, products]);
-  
+
 
   function handleNext() {
     if (pageIndex < totalPages) {
@@ -115,12 +154,16 @@ useEffect(() => {
                     type="text"
                     id="vendor"
                     name="vendor"
-                    value={vendor}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                      setVendor(event.target.value);
-                    }}
-                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    onChange={formik.handleChange}
+                    value={formik.values.vendor}
+                    onBlur={formik.handleBlur}
+                    className={`block w-full rounded-md shadow-sm sm:text-sm ${
+                      formik.touched.vendor && formik.errors.vendor ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-indigo-500'
+                    }`}
                   />
+              {formik.touched.vendor && formik.errors.vendor ? (
+                      <div>{formik.errors.vendor}</div>
+                    ) : null}
                 </div>
               </div>
               <div className="mt-4">
@@ -132,20 +175,43 @@ useEffect(() => {
                 </label>
                 <div className="mt-1 flex">
                   <DatePicker
-                    selected={orderDate}
-                    onChange={(date: Date) => setOrderDate(date)}
-                    className="block w-full rounded-md text-black border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    selected={formik.values.date}
+                    onChange={(date: Date) => {
+                      formik.setFieldValue('date', date);
+                      formik.setFieldTouched('date', true);
+                    }}
+                    onBlur={formik.handleBlur}
+                    name="date"
+                    className={`block w-full rounded-md text-black shadow-sm sm:text-sm ${
+                      formik.touched.date && formik.errors.date ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-indigo-500'
+                    }`}
                   />
+                  {formik.touched.date && formik.errors.date ? (
+                    <div className="text-red-500 mt-2">{`${formik.errors.date}`}</div>
+                  ) : null}
                 </div>
+
               </div>
             </div>
-            <FileUpload setFile={setFile} file={file} />
+            {formik.touched.file && formik.errors.file ? (
+                      <div>{`${formik.errors.file}`}</div>
+                    ) : null}
+            <FileUpload
+              setFile={(uploadedFile) => {
+                setFile(uploadedFile);
+                formik.setFieldValue('file', uploadedFile);
+              }}
+              file={file}
+            />
+
           </div>
 
           {/* Order summary */}
           <div className="mt-10 lg:mt-0">
             <h2 className="text-lg font-medium text-gray-900">Order summary</h2>
-
+            {
+              showSuccess && <SuccessMessage />
+            }
             <div className="mt-4 rounded-lg border border-gray-200 bg-white shadow-sm">
               <h3 className="sr-only">Items in your cart</h3>
               <ul role="list" className="divide-y divide-gray-200">
@@ -216,7 +282,7 @@ useEffect(() => {
                   </div>
                   <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
                     <div>
-                    
+
                     </div>
                     <div>
                       <nav
@@ -260,8 +326,8 @@ useEffect(() => {
               <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
                 <button
                   type="button"
-                  // disabled={orderSubmission}
-                  onClick={()=> {setIsSubmitting(true)}}
+                  disabled={!formik.isValid || !formik.dirty}
+                  onClick={() => formik.handleSubmit()}
                   className="w-full rounded-md border border-transparent bg-indigo-600 px-4 py-3 text-base font-medium text-white shadow-sm disabled:opacity-25 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
                 >
                   Confirm order

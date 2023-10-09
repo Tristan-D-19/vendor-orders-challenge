@@ -7,8 +7,9 @@ const convertToFormData = (order: OrderSubmission): FormData => {
   const formData = new FormData();
   formData.append('vendor', order.vendor);
   formData.append('date', order.date.toISOString());
-  formData.append('file', order.file); 
-  
+  if(order.file)
+  {formData.append('file', order.file); }
+
   return formData;
 }
 export const createOrder = async (order: OrderSubmission): Promise<Order> =>  {

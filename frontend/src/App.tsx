@@ -6,7 +6,6 @@ import {  useSession, useUser } from '@descope/react-sdk'
 import { Descope } from '@descope/react-sdk'
 
 import Layout from './Layout'
-import OrderSummary from './pages/orderSummary';
 import Order from './pages/order';
 
 
@@ -40,7 +39,6 @@ function App() {
         <Routes>
           <Route path="/orders" element={<Orders />} />
           <Route path="/" element={<Checkout />} />
-          <Route path="/orders/order/:orderId?summary=true" element={<OrderSummary/>} />
           <Route path="/orders/order/:orderId" element={<Order/>} />
           <Route path="/orders/:orderId?summary=true" element={<Orders/>} />
         </Routes>

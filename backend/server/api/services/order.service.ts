@@ -8,7 +8,12 @@ const prisma = new PrismaClient();
 
 export class OrderService {
   all(): Promise<Order[]> {
-    return prisma.order.findMany();
+    return prisma.order.findMany({
+      include: {
+        products: true
+      }
+    });
+
   }
 
   byId(id: string): Promise<Order | null> {
@@ -24,7 +29,7 @@ export class OrderService {
     return prisma.order.findMany({
       where: {
         vendor: vendorName,
-        
+
       }
     });
   }
@@ -33,11 +38,12 @@ export class OrderService {
   async create(orderData: Omit<Order, 'id' | 'dateAdded'>): Promise<Order> {
     return new Promise(async (resolve, reject) => {
    try{
+
        const vendor = await vendorService.create({name: orderData.vendor})
    const newOrder = {
      ...orderData,
      id: uuid(),
-     vendorId: vendor.id,
+     vendorId: vendor?.id ? vendor.id : "",
      dateAdded: new Date(),
      products: {
        create: orderData.products?.map((product: Product) => ({
@@ -63,7 +69,7 @@ export class OrderService {
 }
 
 
-  
+
 }
 
 export default new OrderService();
