@@ -4,16 +4,16 @@
     "private": true,
     "scripts": {
     "postinstall": "npm run install:all",
-    "install:all": "npm run install:backend && npm run install:frontend", 
+    "install:all": "npm run install:backend && npm run install:frontend",
     "install:backend": "cd backend && npm install",
     "install:frontend": "cd frontend && npm install",
       "start:all": "npm run start:backend & npm run start:frontend",
       "start:backend": "cd backend && npm start",
       "start:frontend": "cd frontend && npm run dev",
-      "generate-csv": "node generateCSV.js"
+      "generate-csv": "node generateCSV.js",
+      "migrate:prod": "cd backend && npm run migrate:prod"
     },
     "devDependencies": {
         "@faker-js/faker": "^8.1.0"
       }
   }
-  

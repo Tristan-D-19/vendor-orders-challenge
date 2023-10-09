@@ -11,7 +11,8 @@
     "lint": "eslint -c .eslintrc.js \"{server, test}/**/*.{js,ts,tsx}\" --quiet",
     "lint:fix": "eslint -c .eslintrc.js \"{server, test}/**/*.{js,ts,tsx}\" --quiet --fix",
     "test": "mocha -r ts-node/register test/**/*.ts --exit",
-    "test:debug": "mocha -r ts-node/register --inspect-brk test/**/*.ts --exit"
+    "test:debug": "mocha -r ts-node/register --inspect-brk test/**/*.ts --exit",
+    "migrate:prod": "prisma migrate deploy"
   },
   "dependencies": {
     "@prisma/client": "^5.4.1",

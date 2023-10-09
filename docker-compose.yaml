@@ -1,29 +1,41 @@
-version: '3.7'
+version: '3.8'
 
 
 services:
   postgres:
-    image: postgres:16.0 
+    container_name: postgres
+    image: postgres:16.0
     restart: always
     ports:
       - "5432:5432"
     environment:
       - POSTGRES_PASSWORD=superpass
     volumes:
-      - postgres_data:/var/lib/postgresql/data 
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql 
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "admin"]
+      test: ["CMD-SHELL", "pg_isready", "-U", "postgres"]
       interval: 30s
-      timeout: 10s
+      timeout: 100s
       retries: 5
+    networks:
+      - backend
 
-  vendor-order-service: 
+  vendor-order-service:
     container_name: vendor-order-service
-    build: ./backend
+
+    build:
+      context: ./backend
+      args:
+      - DATABASE_URL=postgresql://vo_admin:adminpass@postgres:5432/vendor_orders?schema=public&connect_timeout=300&pool_timeout=30&socket_timeout=30
     image: vendor-order-service:version1
+    restart: always
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
+    networks:
+      - backend
+
     environment:
       - NODE_ENV=production
       - LOG_LEVEL=debug
@@ -32,6 +44,7 @@ services:
       - FRONT_END_URL=http://localhost:8000
     ports:
       - "3000:3000"
+
 
   frontend:
     build: ./frontend
@@ -47,3 +60,6 @@ services:
 volumes:
   postgres_data:
 
+networks:
+  backend:
+    driver: bridge

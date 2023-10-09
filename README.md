@@ -4,13 +4,18 @@ current time: 1:30 PM Friday, October 6, 2023 (EDT) Time in New York, NY
 Time estimate: 4 hours.
 
 ## Prerequisites
-### Dependencies: Docker, Postgresql 
+### Dependencies: Docker, Postgresql
 Ensure you have Docker installed. If not, please follow instructions from Docker's official website.
 
 ## Running with Docker
 Start the Services:
 ```bash
 docker-compose up
+```
+##NOTE you must run *after* the services have started:
+
+```bash
+npm run migrate:prod
 ```
 
 Stop the Services:
