@@ -1,8 +1,8 @@
 import axios from 'axios';
-const BASE_URL = import.meta.env.DEV ? "/api": import.meta.env.VITE_API_ENDPOINT 
+const BASE_URL =  import.meta.env.VITE_API_ENDPOINT 
+import { getSessionToken } from '@descope/react-sdk';
 
-
-
+axios.defaults.headers.common['Authorization'] = `Bearer ${getSessionToken()}`;
 const convertToFormData = (order: OrderSubmission): FormData => {
   const formData = new FormData();
   formData.append('vendor', order.vendor);
@@ -13,17 +13,17 @@ const convertToFormData = (order: OrderSubmission): FormData => {
 }
 export const createOrder = async (order: OrderSubmission): Promise<Order> =>  {
   const formData = convertToFormData(order);
-      try {
+  try {
           const response = await axios.post(
             `${BASE_URL }/orders`,
             formData,
             {
               headers: {
                 'Content-Type': 'multipart/form-data',
+                'Authorization': `Bearer ${getSessionToken()}`,
               },
             }
           );
-            console.log("response: ", response)
           return response.data;
         } catch (error) {
           console.error("Error creating the order:", error);

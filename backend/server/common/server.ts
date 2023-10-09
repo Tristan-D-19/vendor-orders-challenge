@@ -8,17 +8,18 @@ import l from './logger';
 import cors from 'cors';
 import errorHandler from '../api/middlewares/error.handler';
 import * as OpenApiValidator from 'express-openapi-validator';
-const FRONT_END_URL = process.env.FRONT_END_URL || "http://localhost:5173";
+import authHandler from '../api/middlewares/authentication.handler'
+const FRONT_END_URL = process.env.FRONT_END_URL || "http://localhost:8000";
 const app = express();
 const corsOptions = {
-  origin: FRONT_END_URL,  // specify the frontend's address
+  origin: FRONT_END_URL, 
 
 };
 export default class ExpressServer {
-  private routes: (app: Application) => void;
   constructor() {
     const root = path.normalize(__dirname + '/../..');
     app.use(cors(corsOptions));
+    app.use(authHandler);
     app.use(bodyParser.json({ limit: process.env.REQUEST_LIMIT || '100kb' }));
     app.use(
       bodyParser.urlencoded({
@@ -30,6 +31,7 @@ export default class ExpressServer {
     app.use(cookieParser(process.env.SESSION_SECRET));
     app.use(express.static(`${root}/public`));
 
+    app.use
     const apiSpec = path.join(__dirname, 'api.yml');
     const validateResponses = !!(
       process.env.OPENAPI_ENABLE_RESPONSE_VALIDATION &&

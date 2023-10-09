@@ -8,7 +8,7 @@
     "install:backend": "cd backend && npm install",
     "install:frontend": "cd frontend && npm install",
       "start:all": "npm run start:backend & npm run start:frontend",
-      "start:backend": "cd backend && npm start",
+      "start:backend": "cd backend && npm run dev",
       "start:frontend": "cd frontend && npm run dev",
       "generate-csv": "node generateCSV.js"
     },

@@ -12,7 +12,6 @@ export class Controller {
 
   byId(req: Request, res: Response): void {
     const id = req.params['id'];
-  console.log("order id ", id)
     orderService.byId(id).then((r) => {
       if (r) res.json(r);
       else res.status(404).end();
@@ -25,7 +24,6 @@ export class Controller {
       date: Date,
     }
     let parsedData: OrderData = req.body;
-    console.log("parsed data: ", parsedData)
     let order: Order = {
       id: uuid(),
       vendor: parsedData.vendor,

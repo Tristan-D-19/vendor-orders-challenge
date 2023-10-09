@@ -30,6 +30,7 @@ services:
       - PORT=3000
       - DATABASE_URL=postgresql://vo_admin:adminpass@postgres:5432/vendor_orders
       - FRONT_END_URL=http://localhost:8000
+      - DESCOPE_PROJECT_ID=P2WDwTMRVKSAP9OqS7GI7PW5BjX9
     ports:
       - "3000:3000"
 
@@ -41,6 +42,7 @@ services:
     - NODE_ENV=production
     - PORT=8000
     - VITE_API_ENDPOINT=http://localhost:3000/api/v1
+    - VITE_DESCOPE_PROJECT_ID=P2WDwTMRVKSAP9OqS7GI7PW5BjX9
     ports:
       - "8000:8000"
 

@@ -94,7 +94,7 @@ export default function Order() {
          
               <div className="flex items-center justify-between pt-4">
                 <dt className="font-medium text-gray-900">Order total</dt>
-               {total ? <dd className="font-medium text-indigo-600">{total.toLocaleString()}</dd>: null}
+              {total ? <dd className="font-medium text-indigo-600"> ${total.toLocaleString()}</dd>: null}
               </div>
             </dl>
       </div>

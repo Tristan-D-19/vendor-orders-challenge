@@ -28,7 +28,6 @@ export default function OrderForm() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log("Products: ", products);
     const pages = Math.ceil(products.length / pageSize);
     
     setTotalPages(pages);
@@ -58,7 +57,6 @@ useEffect(() => {
         file
       }
       createOrder(order).then(res => {
-        console.log("res: ", res);
         setCompletedOrder(res);
         if(res && res.products){
           setProducts(res.products)
@@ -68,10 +66,6 @@ useEffect(() => {
     }
   }, [isSubmitting]);
   
-  
-  useEffect(() => {
-    console.log("orderDate: ", orderDate);
-  }, [orderDate]);
   
   useEffect(() => {
     const startIdx = (pageIndex - 1) * pageSize;

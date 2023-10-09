@@ -14,6 +14,7 @@
     "test:debug": "mocha -r ts-node/register --inspect-brk test/**/*.ts --exit"
   },
   "dependencies": {
+    "@descope/node-sdk": "^1.5.7",
     "@prisma/client": "^5.4.1",
     "@types/cors": "^2.8.14",
     "@types/uuid": "^9.0.4",
