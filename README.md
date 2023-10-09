@@ -8,11 +8,24 @@ Time estimate: 4 hours.
 Ensure you have Docker installed. If not, please follow instructions from Docker's official website.
 
 ## Running with Docker
-Start the Services:
+on the first run of the services I have added a helper script
+
+Linux/Unix
+```bash
+chmod +x start.sh
+./start.sh
+```
+
+Windows:
+```bat
+./start.bat
+```
+
+To Manually Start the Services:
 ```bash
 docker-compose up
 ```
-##NOTE you must run the following command *after* the services have started:
+##NOTE you MUST run the following command *after* the services have started:
 
 ```bash
 npm run install:all
@@ -27,17 +40,16 @@ docker-compose down
 
 
 ## Running Without Docker
-If Docker isn't your thing:
-
 If docker does not work or run on your machine:
 1. Run PostgreSQL locally.
 2. Start the services:
 ```bash
+npm run install:all
+npm run migrate:prod
 npm run start:all
 ```
 
-## For backend endpoint testing, use the provided Insomnia collection:
-Insomnia-{Date}.json
+
 
 ## Environment Variables
 For this example, environment variables are included in the docker-compose.yaml. Usually, these are kept private.
