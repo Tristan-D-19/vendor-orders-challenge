@@ -25,7 +25,7 @@ To Manually Start the Services:
 ```bash
 docker-compose up
 ```
-##NOTE you MUST run the following command *after* the services have started:
+## NOTE you MUST run the following command *after* the services have started:
 
 ```bash
 npm run install:all
