@@ -18,9 +18,11 @@ const validateUserSession = async (req: Request, res: Response, next: NextFuncti
 
     try {
         const authInfo = await descopeClient.validateSession(sessionToken);
-        console.log("Successfully validated user session:");
-        console.log(authInfo);
+        if(authInfo){
+            console.log("Successfully validated user session:");
 
+        }
+      
 
        return next(); 
     } catch (error) {
